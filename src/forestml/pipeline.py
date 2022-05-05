@@ -2,12 +2,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-def create_pipeline(random_state: int) -> Pipeline:
-    scaler = StandardScaler()
+def create_pipeline(use_scaler: bool, random_state: int) -> Pipeline:
+    pipeline_steps = []
 
-    clf = LogisticRegression(random_state=random_state)
+    if use_scaler:
+        pipeline_steps.append(("scaler", StandardScaler()))
 
-    pipeline = Pipeline(steps=[("scaler", scaler), ("classifier", clf)])
+    pipeline_steps.append(("classifier", LogisticRegression(random_state=random_state)))
 
-    return pipeline
+    return Pipeline(steps=pipeline_steps)
     
