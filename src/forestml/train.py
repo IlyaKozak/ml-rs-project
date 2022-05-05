@@ -40,13 +40,19 @@ from .data import get_dataset
     default=100,
     type=int
 )
+@click.option(
+    "--logreg-c",
+    default=1.0,
+    type=float
+)
 def train(
     dataset_path: Path,
     save_model_path: Path,
     random_state: int, 
     test_split_ratio: float,
     use_scaler: bool,
-    max_iter: int
+    max_iter: int,
+    logreg_c: float
 ) -> None:
     features_train, features_val, target_train, target_val = get_dataset(
       dataset_path, 
@@ -54,7 +60,7 @@ def train(
       test_split_ratio
     )
 
-    pipeline = create_pipeline(use_scaler, max_iter, random_state)
+    pipeline = create_pipeline(use_scaler, max_iter, logreg_c, random_state)
     pipeline.fit(features_train, target_train)
 
     accuracy = accuracy_score(target_val, pipeline.predict(features_val))
