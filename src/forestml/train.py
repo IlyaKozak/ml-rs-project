@@ -6,6 +6,7 @@ import mlflow
 import mlflow.sklearn
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
+from sklearn.metrics import matthews_corrcoef
 
 from .pipeline import create_pipeline
 from .data import get_dataset
@@ -72,12 +73,15 @@ def train(
         click.echo(f"Accuracy: {accuracy}")
         f1 = f1_score(target_val, pred_val, average='weighted')
         click.echo(f"F1 score: {f1}")
+        mcc = matthews_corrcoef(target_val, pred_val)
+        click.echo(f"Matthews correlation coefficient (MCC): {mcc}")
 
         mlflow.log_param("use_scaler", use_scaler)
         mlflow.log_param("max_iter", max_iter)
         mlflow.log_param("logreg_c", logreg_c)
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("f1_score", f1)
+        mlflow.log_metric("mcc", mcc)
 
         dump(pipeline, save_model_path)
         click.echo(f"Model is saved to {save_model_path}")
