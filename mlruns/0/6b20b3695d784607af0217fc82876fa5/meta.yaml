@@ -1,0 +1,15 @@
+artifact_uri: file:///home/ilya/Downloads/ML/Repos/ml-rs-project/mlruns/0/6b20b3695d784607af0217fc82876fa5/artifacts
+end_time: 1651768249433
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 6b20b3695d784607af0217fc82876fa5
+run_uuid: 6b20b3695d784607af0217fc82876fa5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1651768246038
+status: 3
+tags: []
+user_id: ilya
