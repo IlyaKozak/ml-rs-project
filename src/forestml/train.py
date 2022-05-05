@@ -14,7 +14,12 @@ from sklearn.model_selection import train_test_split
     default="data/train.csv",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
 )
-def train(dataset_path: Path) -> None:
+@click.option(
+    "--random-state",
+    default=42,
+    type=int
+)
+def train(dataset_path: Path, random_state: int) -> None:
     dataset = pd.read_csv(dataset_path)
     click.echo(f"Dataset shape: {dataset.shape}")
 
@@ -22,9 +27,9 @@ def train(dataset_path: Path) -> None:
     target = dataset["Cover_Type"]
 
     features_train, features_val, target_train, target_val = train_test_split(
-      features, target, test_size=0.2, random_state=42
+      features, target, test_size=0.2, random_state=random_state
     )
 
-    clf = LogisticRegression(random_state=42).fit(features_train, target_train)
+    clf = LogisticRegression(random_state=random_state).fit(features_train, target_train)
     accuracy = accuracy_score(target_val, clf.predict(features_val))
     click.echo(f"Accuracy: {accuracy}")
