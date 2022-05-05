@@ -5,8 +5,8 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+
+from .pipeline import create_pipeline
 
 @click.command()
 @click.option(
@@ -36,11 +36,7 @@ def train(dataset_path: Path, random_state: int, test_split_ratio: float) -> Non
       features, target, test_size=test_split_ratio, random_state=random_state
     )
 
-    scaler = StandardScaler()
-
-    clf = LogisticRegression(random_state=random_state)
-    
-    pipeline = Pipeline(steps=[("scaler", scaler), ("classifier", clf)])
+    pipeline = create_pipeline(random_state)
     pipeline.fit(features_train, target_train)
 
     accuracy = accuracy_score(target_val, pipeline.predict(features_val))
