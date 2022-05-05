@@ -1,8 +1,11 @@
 [tool.poetry]
-name = "ml-rs-project"
+name = "forestml"
 version = "0.1.0"
 description = ""
 authors = ["Ilya Kozak <kozak@tut.by>"]
+
+[tool.poetry.scripts]
+train = "forestml.train:train"
 
 [tool.poetry.dependencies]
 python = "^3.9"
