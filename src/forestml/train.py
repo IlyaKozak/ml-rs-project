@@ -19,7 +19,12 @@ from sklearn.model_selection import train_test_split
     default=42,
     type=int
 )
-def train(dataset_path: Path, random_state: int) -> None:
+@click.option(
+    "--test-split-ratio",
+    default=0.2,
+    type=click.FloatRange(0, 1, min_open=True, max_open=True)
+)
+def train(dataset_path: Path, random_state: int, test_split_ratio: float) -> None:
     dataset = pd.read_csv(dataset_path)
     click.echo(f"Dataset shape: {dataset.shape}")
 
@@ -27,7 +32,7 @@ def train(dataset_path: Path, random_state: int) -> None:
     target = dataset["Cover_Type"]
 
     features_train, features_val, target_train, target_val = train_test_split(
-      features, target, test_size=0.2, random_state=random_state
+      features, target, test_size=test_split_ratio, random_state=random_state
     )
 
     clf = LogisticRegression(random_state=random_state).fit(features_train, target_train)
