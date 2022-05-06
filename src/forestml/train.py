@@ -2,14 +2,15 @@ from pathlib import Path
 from joblib import dump
 
 import click
+import pandas as pd
 import mlflow
 import mlflow.sklearn
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import f1_score
 from sklearn.metrics import matthews_corrcoef
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import cross_validate
 
 from .pipeline import create_pipeline
-from .data import get_dataset
+from .data import get_dataset, get_split_dataset
 
 @click.command()
 @click.option(
@@ -58,22 +59,39 @@ def train(
     max_iter: int,
     logreg_c: float
 ) -> None:
-    features_train, features_val, target_train, target_val = get_dataset(
-        dataset_path, 
-        random_state, 
+    features, target = get_dataset(
+        dataset_path
+    )
+
+    features_train, features_val, target_train, target_val = get_split_dataset(
+        dataset_path,
+        random_state,
         test_split_ratio
     )
 
     with mlflow.start_run():
         pipeline = create_pipeline(use_scaler, max_iter, logreg_c, random_state)
-        pipeline.fit(features_train, target_train)
 
-        pred_val = pipeline.predict(features_val)
-        accuracy = accuracy_score(target_val, pred_val)
+        scoring = {
+            "accuracy": "accuracy",
+            "f1": "f1_weighted",
+            "mcc": make_scorer(matthews_corrcoef)
+        }
+
+        scores = cross_validate(
+            pipeline, 
+            features, 
+            target, 
+            scoring=scoring
+        )
+
+        pipeline.fit(features, target)
+
+        accuracy = pd.Series(scores["test_accuracy"]).mean()
         click.echo(f"Accuracy: {accuracy}")
-        f1 = f1_score(target_val, pred_val, average='weighted')
+        f1 = pd.Series(scores["test_f1"]).mean()
         click.echo(f"F1 score: {f1}")
-        mcc = matthews_corrcoef(target_val, pred_val)
+        mcc = pd.Series(scores["test_mcc"]).mean()
         click.echo(f"Matthews correlation coefficient (MCC): {mcc}")
 
         mlflow.log_param("use_scaler", use_scaler)
