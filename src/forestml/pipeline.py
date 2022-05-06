@@ -1,8 +1,10 @@
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 def create_pipeline(
+    model: str,
     use_scaler: bool, 
     max_iter: int,
     logrec_C: float,
@@ -13,12 +15,17 @@ def create_pipeline(
     if use_scaler:
         pipeline_steps.append(("scaler", StandardScaler()))
 
-    pipeline_steps.append(
-        ("classifier", LogisticRegression(
+    if model == "knn":
+        clf = KNeighborsClassifier()
+    else:
+        clf = LogisticRegression(
             random_state=random_state, 
             max_iter=max_iter, 
-            C=logrec_C)
+            C=logrec_C
         )
+
+    pipeline_steps.append(
+        ("classifier", clf)
     )
 
     return Pipeline(steps=pipeline_steps)

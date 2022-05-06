@@ -50,6 +50,11 @@ from .data import get_dataset, get_split_dataset
     default=1.0,
     type=float
 )
+@click.option(
+    "--model",
+    default="logreg",
+    type=click.Choice(["logreg", "knn"])
+)
 def train(
     dataset_path: Path,
     save_model_path: Path,
@@ -57,7 +62,8 @@ def train(
     test_split_ratio: float,
     use_scaler: bool,
     max_iter: int,
-    logreg_c: float
+    logreg_c: float,
+    model: str
 ) -> None:
     features, target = get_dataset(
         dataset_path
@@ -70,7 +76,7 @@ def train(
     )
 
     with mlflow.start_run():
-        pipeline = create_pipeline(use_scaler, max_iter, logreg_c, random_state)
+        pipeline = create_pipeline(model, use_scaler, max_iter, logreg_c, random_state)
 
         scoring = {
             "accuracy": "accuracy",
