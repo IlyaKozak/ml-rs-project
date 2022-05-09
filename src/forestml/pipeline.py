@@ -1,5 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -17,6 +18,14 @@ def create_pipeline(
 
     if model == "knn":
         clf = KNeighborsClassifier()
+    elif model == 'rfc':
+        clf = RandomForestClassifier(
+            random_state=random_state,
+            # criterion="entropy",
+            # min_samples_split=7,
+            # max_depth=5,
+            # n_estimators=150
+        )
     else:
         clf = LogisticRegression(
             random_state=random_state, 

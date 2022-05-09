@@ -53,7 +53,7 @@ from .data import get_dataset, get_split_dataset
 @click.option(
     "--model",
     default="logreg",
-    type=click.Choice(["logreg", "knn"])
+    type=click.Choice(["logreg", "knn", "rfc"])
 )
 def train(
     dataset_path: Path,
@@ -100,9 +100,19 @@ def train(
         mcc = pd.Series(scores["test_mcc"]).mean()
         click.echo(f"Matthews correlation coefficient (MCC): {mcc}")
 
+        if model == "knn":
+            mlflow.log_param("_model", "knn")
+            mlflow.sklearn.log_model(pipeline, "knn") 
+        elif model == "rfc":
+            mlflow.log_param("_model", "rfc")
+            mlflow.sklearn.log_model(pipeline, "rfc")
+        else:
+            mlflow.log_param("_model", "logreg")
+            mlflow.sklearn.log_model(pipeline, "logreg")
+            mlflow.log_param("max_iter", max_iter)
+            mlflow.log_param("logreg_c", logreg_c)
+
         mlflow.log_param("use_scaler", use_scaler)
-        mlflow.log_param("max_iter", max_iter)
-        mlflow.log_param("logreg_c", logreg_c)
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("f1_score", f1)
         mlflow.log_metric("mcc", mcc)
