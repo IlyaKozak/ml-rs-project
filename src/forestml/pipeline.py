@@ -3,6 +3,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
 def create_pipeline(
     model: str,
@@ -11,12 +12,16 @@ def create_pipeline(
     logrec_C: float,
     max_depth: int,
     n_estimators: int,
+    use_psa: bool,
     random_state: int,
 ) -> Pipeline:
     pipeline_steps = []
 
     if use_scaler:
         pipeline_steps.append(("scaler", StandardScaler()))
+    
+    if use_psa:
+        pipeline_steps.append(("pca", PCA()))
 
     if model == "knn":
         clf = KNeighborsClassifier()

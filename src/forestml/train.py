@@ -65,6 +65,11 @@ from .data import get_dataset, get_split_dataset
     default=100,
     type=int
 )
+@click.option(
+    "--use-psa",
+    default=False,
+    type=bool
+)
 def train(
     dataset_path: Path,
     save_model_path: Path,
@@ -75,7 +80,8 @@ def train(
     logreg_c: float,
     model: str,
     max_depth: int,
-    n_estimators: int
+    n_estimators: int,
+    use_psa: bool
 ) -> None:
     features, target = get_dataset(
         dataset_path
@@ -95,6 +101,7 @@ def train(
             logreg_c, 
             max_depth, 
             n_estimators,
+            use_psa,
             random_state
         )
 
@@ -134,6 +141,7 @@ def train(
             mlflow.log_param("max_iter", max_iter)
             mlflow.log_param("logreg_c", logreg_c)
 
+        mlflow.log_param("use_psa", use_psa)
         mlflow.log_param("use_scaler", use_scaler)
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("f1_score", f1)
