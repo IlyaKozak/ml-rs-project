@@ -55,6 +55,11 @@ from .data import get_dataset, get_split_dataset
     default="logreg",
     type=click.Choice(["logreg", "knn", "rfc"])
 )
+@click.option(
+    "--max-depth",
+    default=None,
+    type=int
+)
 def train(
     dataset_path: Path,
     save_model_path: Path,
@@ -63,7 +68,8 @@ def train(
     use_scaler: bool,
     max_iter: int,
     logreg_c: float,
-    model: str
+    model: str,
+    max_depth: int
 ) -> None:
     features, target = get_dataset(
         dataset_path
@@ -76,7 +82,14 @@ def train(
     )
 
     with mlflow.start_run():
-        pipeline = create_pipeline(model, use_scaler, max_iter, logreg_c, random_state)
+        pipeline = create_pipeline(
+            model, 
+            use_scaler, 
+            max_iter, 
+            logreg_c, 
+            max_depth, 
+            random_state
+        )
 
         scoring = {
             "accuracy": "accuracy",
@@ -105,6 +118,7 @@ def train(
             mlflow.sklearn.log_model(pipeline, "knn") 
         elif model == "rfc":
             mlflow.log_param("_model", "rfc")
+            mlflow.log_param("max_depth", max_depth)
             mlflow.sklearn.log_model(pipeline, "rfc")
         else:
             mlflow.log_param("_model", "logreg")

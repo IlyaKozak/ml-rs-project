@@ -9,7 +9,8 @@ def create_pipeline(
     use_scaler: bool, 
     max_iter: int,
     logrec_C: float,
-    random_state: int
+    max_depth: int,
+    random_state: int,
 ) -> Pipeline:
     pipeline_steps = []
 
@@ -21,9 +22,7 @@ def create_pipeline(
     elif model == 'rfc':
         clf = RandomForestClassifier(
             random_state=random_state,
-            # criterion="entropy",
-            # min_samples_split=7,
-            # max_depth=5,
+            max_depth=max_depth,
             # n_estimators=150
         )
     else:
