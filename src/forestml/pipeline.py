@@ -10,6 +10,7 @@ def create_pipeline(
     max_iter: int,
     logrec_C: float,
     max_depth: int,
+    n_estimators: int,
     random_state: int,
 ) -> Pipeline:
     pipeline_steps = []
@@ -23,7 +24,7 @@ def create_pipeline(
         clf = RandomForestClassifier(
             random_state=random_state,
             max_depth=max_depth,
-            # n_estimators=150
+            n_estimators=n_estimators
         )
     else:
         clf = LogisticRegression(

@@ -60,6 +60,11 @@ from .data import get_dataset, get_split_dataset
     default=None,
     type=int
 )
+@click.option(
+    "--n-estimators",
+    default=100,
+    type=int
+)
 def train(
     dataset_path: Path,
     save_model_path: Path,
@@ -69,7 +74,8 @@ def train(
     max_iter: int,
     logreg_c: float,
     model: str,
-    max_depth: int
+    max_depth: int,
+    n_estimators: int
 ) -> None:
     features, target = get_dataset(
         dataset_path
@@ -88,6 +94,7 @@ def train(
             max_iter, 
             logreg_c, 
             max_depth, 
+            n_estimators,
             random_state
         )
 
@@ -119,6 +126,7 @@ def train(
         elif model == "rfc":
             mlflow.log_param("_model", "rfc")
             mlflow.log_param("max_depth", max_depth)
+            mlflow.log_param("n_estimators", n_estimators)
             mlflow.sklearn.log_model(pipeline, "rfc")
         else:
             mlflow.log_param("_model", "logreg")
