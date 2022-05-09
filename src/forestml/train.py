@@ -1,5 +1,6 @@
 from pathlib import Path
 from joblib import dump
+import warnings
 
 import click
 import pandas as pd
@@ -83,6 +84,8 @@ def train(
     n_estimators: int,
     use_psa: bool
 ) -> None:
+    warnings.filterwarnings("ignore")
+
     features, target = get_dataset(
         dataset_path
     )
