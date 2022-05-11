@@ -18,6 +18,7 @@ from sklearn.pipeline import Pipeline
 from .pipeline import create_pipeline
 from .data import get_dataset, get_split_dataset
 
+
 @click.command()
 @click.option(
     "-d",
@@ -29,57 +30,25 @@ from .data import get_dataset, get_split_dataset
     "-s",
     "--save-model-path",
     default="data/model.joblib",
-    type=click.Path(dir_okay=False, writable=True, path_type=Path)
+    type=click.Path(dir_okay=False, writable=True, path_type=Path),
 )
-@click.option(
-    "--random-state",
-    default=42,
-    type=int
-)
+@click.option("--random-state", default=42, type=int)
 @click.option(
     "--test-split-ratio",
     default=0.2,
-    type=click.FloatRange(0, 1, min_open=True, max_open=True)
+    type=click.FloatRange(0, 1, min_open=True, max_open=True),
 )
-@click.option(
-    "--use-scaler",
-    default=True,
-    type=bool
-)
-@click.option(
-    "--max-iter",
-    default=100,
-    type=int
-)
-@click.option(
-    "--logreg-c",
-    default=1.0,
-    type=float
-)
-@click.option(
-    "--model",
-    default="logreg",
-    type=click.Choice(["logreg", "knn", "rfc"])
-)
-@click.option(
-    "--max-depth",
-    default=None,
-    type=int
-)
-@click.option(
-    "--n-estimators",
-    default=100,
-    type=int
-)
-@click.option(
-    "--use-psa",
-    default=False,
-    type=bool
-)
+@click.option("--use-scaler", default=True, type=bool)
+@click.option("--max-iter", default=100, type=int)
+@click.option("--logreg-c", default=1.0, type=float)
+@click.option("--model", default="logreg", type=click.Choice(["logreg", "knn", "rfc"]))
+@click.option("--max-depth", default=None, type=int)
+@click.option("--n-estimators", default=100, type=int)
+@click.option("--use-psa", default=False, type=bool)
 def train(
     dataset_path: Path,
     save_model_path: Path,
-    random_state: int, 
+    random_state: int,
     test_split_ratio: float,
     use_scaler: bool,
     max_iter: int,
@@ -87,18 +56,14 @@ def train(
     model: str,
     max_depth: int,
     n_estimators: int,
-    use_psa: bool
+    use_psa: bool,
 ) -> None:
     warnings.filterwarnings("ignore")
 
-    features, target = get_dataset(
-        dataset_path
-    )
+    features, target = get_dataset(dataset_path)
 
     features_train, features_val, target_train, target_val = get_split_dataset(
-        dataset_path,
-        random_state,
-        test_split_ratio
+        dataset_path, random_state, test_split_ratio
     )
 
     with mlflow.start_run():
@@ -129,7 +94,9 @@ def train(
             cv_inner = KFold(n_splits=3, shuffle=True, random_state=random_state)
 
             # define search
-            search = GridSearchCV(pipeline, params, scoring="accuracy", cv=cv_inner, refit=True)
+            search = GridSearchCV(
+                pipeline, params, scoring="accuracy", cv=cv_inner, refit=True
+            )
 
             # execute search
             result = search.fit(X_train, y_train)
@@ -144,16 +111,22 @@ def train(
             # report progress
             mlflow.log_param("_model", result.best_params_)
             mlflow.log_metric("accuracy", acc)
-            click.echo('>acc=%.3f, est=%.3f, cfg=%s' % (acc, result.best_score_, result.best_params_))
+            click.echo(
+                ">acc=%.3f, est=%.3f, cfg=%s"
+                % (acc, result.best_score_, result.best_params_)
+            )
         # summarize the estimated performance of the model
-        click.echo('Accuracy: %.3f (%.3f)' % (pd.Series(outer_results).mean(), pd.Series(outer_results).std()))
+        click.echo(
+            "Accuracy: %.3f (%.3f)"
+            % (pd.Series(outer_results).mean(), pd.Series(outer_results).std())
+        )
 
         pipeline = create_pipeline(
             model="rfc",
             use_scaler=use_scaler,
             max_depth=None,
             n_estimators=100,
-            random_state=random_state
+            random_state=random_state,
         )
 
         pipeline.fit(features, target)

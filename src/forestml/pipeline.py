@@ -5,9 +5,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
+
 def create_pipeline(
     model: str,
-    use_scaler: bool, 
+    use_scaler: bool,
     max_iter: int,
     logrec_C: float,
     max_depth: int,
@@ -19,28 +20,21 @@ def create_pipeline(
 
     if use_scaler:
         pipeline_steps.append(("scaler", StandardScaler()))
-    
+
     if use_psa:
         pipeline_steps.append(("pca", PCA()))
 
     if model == "knn":
         clf = KNeighborsClassifier()
-    elif model == 'rfc':
+    elif model == "rfc":
         clf = RandomForestClassifier(
-            random_state=random_state,
-            max_depth=max_depth,
-            n_estimators=n_estimators
+            random_state=random_state, max_depth=max_depth, n_estimators=n_estimators
         )
     else:
         clf = LogisticRegression(
-            random_state=random_state, 
-            max_iter=max_iter, 
-            C=logrec_C
+            random_state=random_state, max_iter=max_iter, C=logrec_C
         )
 
-    pipeline_steps.append(
-        ("classifier", clf)
-    )
+    pipeline_steps.append(("classifier", clf))
 
     return Pipeline(steps=pipeline_steps)
-    
