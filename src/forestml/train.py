@@ -6,9 +6,14 @@ import click
 import pandas as pd
 import mlflow
 import mlflow.sklearn
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
 from sklearn.metrics import matthews_corrcoef
-from sklearn.metrics import make_scorer
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import KFold
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
 
 from .pipeline import create_pipeline
 from .data import get_dataset, get_split_dataset
@@ -97,54 +102,70 @@ def train(
     )
 
     with mlflow.start_run():
+        # define search space
+        param_logreg = {}
+        clf_logreg = LogisticRegression(random_state=random_state)
+        param_logreg["classifier"] = [clf_logreg]
+        param_logreg["classifier__C"] = [0.7, 0.85, 1]
+        param_logreg["classifier__max_iter"] = [100, 200, 500]
+
+        pipeline = Pipeline([("classifier", clf_logreg)])
+
+        param_rfc = {}
+        clf_rfc = RandomForestClassifier(random_state=random_state)
+        param_rfc["classifier"] = [clf_rfc]
+        param_rfc["classifier__max_depth"] = [5, 10, None]
+        param_rfc["classifier__n_estimators"] = [75, 100, 150]
+
+        params = [param_logreg, param_rfc]
+
+        cv_outer = KFold(n_splits=5, shuffle=True, random_state=random_state)
+        outer_results = []
+
+        for train_ix, test_ix in cv_outer.split(features):
+            X_train, X_test = features.iloc[train_ix, :], features.iloc[test_ix, :]
+            y_train, y_test = target[train_ix], target[test_ix]
+
+            cv_inner = KFold(n_splits=3, shuffle=True, random_state=random_state)
+
+            # define search
+            search = GridSearchCV(pipeline, params, scoring="accuracy", cv=cv_inner, refit=True)
+
+            # execute search
+            result = search.fit(X_train, y_train)
+            # get the best performing model fit on the whole training set
+            best_model = result.best_estimator_
+            # evaluate model on the hold out dataset
+            yhat = best_model.predict(X_test)
+            # evaluate the model
+            acc = accuracy_score(y_test, yhat)
+            # store the result
+            outer_results.append(acc)
+            # report progress
+            mlflow.log_param("_model", result.best_params_)
+            mlflow.log_metric("accuracy", acc)
+            click.echo('>acc=%.3f, est=%.3f, cfg=%s' % (acc, result.best_score_, result.best_params_))
+        # summarize the estimated performance of the model
+        click.echo('Accuracy: %.3f (%.3f)' % (pd.Series(outer_results).mean(), pd.Series(outer_results).std()))
+
         pipeline = create_pipeline(
-            model, 
-            use_scaler, 
-            max_iter, 
-            logreg_c, 
-            max_depth, 
-            n_estimators,
-            use_psa,
-            random_state
-        )
-
-        scoring = {
-            "accuracy": "accuracy",
-            "f1": "f1_weighted",
-            "mcc": make_scorer(matthews_corrcoef)
-        }
-
-        scores = cross_validate(
-            pipeline, 
-            features, 
-            target, 
-            scoring=scoring
+            model="rfc",
+            use_scaler=use_scaler,
+            max_depth=None,
+            n_estimators=100,
+            random_state=random_state
         )
 
         pipeline.fit(features, target)
+        y_pred = pipeline.predict(X_test)
 
-        accuracy = pd.Series(scores["test_accuracy"]).mean()
+        accuracy = accuracy_score(y_test, y_pred)
         click.echo(f"Accuracy: {accuracy}")
-        f1 = pd.Series(scores["test_f1"]).mean()
+        f1 = f1_score(y_test, y_pred)
         click.echo(f"F1 score: {f1}")
-        mcc = pd.Series(scores["test_mcc"]).mean()
+        mcc = matthews_corrcoef(y_test, y_pred)
         click.echo(f"Matthews correlation coefficient (MCC): {mcc}")
 
-        if model == "knn":
-            mlflow.log_param("_model", "knn")
-            mlflow.sklearn.log_model(pipeline, "knn") 
-        elif model == "rfc":
-            mlflow.log_param("_model", "rfc")
-            mlflow.log_param("max_depth", max_depth)
-            mlflow.log_param("n_estimators", n_estimators)
-            mlflow.sklearn.log_model(pipeline, "rfc")
-        else:
-            mlflow.log_param("_model", "logreg")
-            mlflow.sklearn.log_model(pipeline, "logreg")
-            mlflow.log_param("max_iter", max_iter)
-            mlflow.log_param("logreg_c", logreg_c)
-
-        mlflow.log_param("use_psa", use_psa)
         mlflow.log_param("use_scaler", use_scaler)
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("f1_score", f1)
