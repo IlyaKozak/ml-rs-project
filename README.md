@@ -21,8 +21,13 @@ poetry run train --help
 ```sh
 poetry run mlflow ui
 ```
+Experiments with the models (MLflow):
+![MLflow Experiments](mlflow_runs.png)
 
 ## Development
+
+Linting (flake8) and formatting (black):
+![flake8 + black](flake8-black-results.png)
 
 TODO:
 * error cases test(s)
