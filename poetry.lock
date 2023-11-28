@@ -815,13 +815,13 @@ files = [
 
 [[package]]
 name = "mlflow"
-version = "2.5.0"
+version = "2.8.1"
 description = "MLflow: A Platform for ML Development and Productionization"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.5.0-py3-none-any.whl", hash = "sha256:981fcb3480ca7383b47e22b5e4c726d21e2c87fb4035e5a1b57574736c665576"},
-    {file = "mlflow-2.5.0.tar.gz", hash = "sha256:f992ae8ea9c73502344baf48c4ec447aa9efbfa8965bc090868e6163234f4eb0"},
+    {file = "mlflow-2.8.1-py3-none-any.whl", hash = "sha256:c14716f2b328cc4a649394013035f8326d4408b9a7c8f378b8f0cb3e0e741af9"},
+    {file = "mlflow-2.8.1.tar.gz", hash = "sha256:e4e5bdd2d9efb0b386ecbce2df7e43f04c46a32080208414dc53b5fd71559678"},
 ]
 
 [package.dependencies]
@@ -831,9 +831,9 @@ cloudpickle = "<3"
 databricks-cli = ">=0.8.7,<1"
 docker = ">=4.0.0,<7"
 entrypoints = "<1"
-Flask = "<3"
+Flask = "<4"
 gitpython = ">=2.1.0,<4"
-gunicorn = {version = "<21", markers = "platform_system != \"Windows\""}
+gunicorn = {version = "<22", markers = "platform_system != \"Windows\""}
 importlib-metadata = ">=3.7.0,<4.7.0 || >4.7.0,<7"
 Jinja2 = [
     {version = ">=2.11,<4", markers = "platform_system != \"Windows\""},
@@ -845,7 +845,7 @@ numpy = "<2"
 packaging = "<24"
 pandas = "<3"
 protobuf = ">=3.12.0,<5"
-pyarrow = ">=4.0.0,<13"
+pyarrow = ">=4.0.0,<15"
 pytz = "<2024"
 pyyaml = ">=5.1,<7"
 querystring-parser = "<2"
@@ -860,8 +860,9 @@ waitress = {version = "<3", markers = "platform_system == \"Windows\""}
 aliyun-oss = ["aliyunstoreplugin"]
 databricks = ["azure-storage-file-datalake (>12)", "boto3 (>1)", "google-cloud-storage (>=1.30.0)"]
 extras = ["azureml-core (>=1.2.0)", "boto3", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0,!=1.3.1)", "mlserver-mlflow (>=1.2.0,!=1.3.1)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "virtualenv"]
-gateway = ["aiohttp (<4)", "fastapi (<1)", "psutil (<6)", "pydantic (>=1.0,<2)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
+gateway = ["aiohttp (<4)", "boto3 (>=1.28.56,<2)", "fastapi (<1)", "pydantic (>=1.0,<3)", "uvicorn[standard] (<1)", "watchfiles (<1)"]
 sqlserver = ["mlflow-dbstore"]
+xethub = ["mlflow-xethub"]
 
 [[package]]
 name = "more-itertools"
@@ -1759,4 +1760,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f189a731c442b7a084ca2cdf6958e8eccbe8e5cfc0a5e5b1aba81e298797f0a4"
+content-hash = "04159f9d703b37a636cd60684d719e6fb6dcfbc9467a13d3aa83dac0ed13c69e"
