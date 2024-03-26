@@ -17,7 +17,7 @@ mlflow = "^2.10.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
-black = "^22.3.0"
+black = "^24.3.0"
 flake8 = "^4.0.1"
 
 [build-system]
