@@ -368,23 +368,25 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "fastapi"
-version = "0.109.1"
+version = "0.116.0"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "fastapi-0.109.1-py3-none-any.whl", hash = "sha256:510042044906b17b6d9149135d90886ade170bf615efcfb5533f568ae6d88534"},
-    {file = "fastapi-0.109.1.tar.gz", hash = "sha256:5402389843a3561918634eb327e86b9ae98645a9e7696bede9074449c48d610a"},
+    {file = "fastapi-0.116.0-py3-none-any.whl", hash = "sha256:fdcc9ed272eaef038952923bef2b735c02372402d1203ee1210af4eea7a78d2b"},
+    {file = "fastapi-0.116.0.tar.gz", hash = "sha256:80dc0794627af0390353a6d1171618276616310d37d24faba6648398e57d687a"},
 ]
 
 [package.dependencies]
 pydantic = ">=1.7.4,<1.8 || >1.8,<1.8.1 || >1.8.1,<2.0.0 || >2.0.0,<2.0.1 || >2.0.1,<2.1.0 || >2.1.0,<3.0.0"
-starlette = ">=0.35.0,<0.36.0"
+starlette = ">=0.40.0,<0.47.0"
 typing-extensions = ">=4.8.0"
 
 [package.extras]
-all = ["email-validator (>=2.0.0)", "httpx (>=0.23.0)", "itsdangerous (>=1.1.0)", "jinja2 (>=2.11.2)", "orjson (>=3.2.1)", "pydantic-extra-types (>=2.0.0)", "pydantic-settings (>=2.0.0)", "python-multipart (>=0.0.7)", "pyyaml (>=5.3.1)", "ujson (>=4.0.1,!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0)", "uvicorn[standard] (>=0.12.0)"]
+all = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.8)", "httpx (>=0.23.0)", "itsdangerous (>=1.1.0)", "jinja2 (>=3.1.5)", "orjson (>=3.2.1)", "pydantic-extra-types (>=2.0.0)", "pydantic-settings (>=2.0.0)", "python-multipart (>=0.0.18)", "pyyaml (>=5.3.1)", "ujson (>=4.0.1,!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0)", "uvicorn[standard] (>=0.12.0)"]
+standard = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.8)", "httpx (>=0.23.0)", "jinja2 (>=3.1.5)", "python-multipart (>=0.0.18)", "uvicorn[standard] (>=0.12.0)"]
+standard-no-fastapi-cloud-cli = ["email-validator (>=2.0.0)", "fastapi-cli[standard-no-fastapi-cloud-cli] (>=0.0.8)", "httpx (>=0.23.0)", "jinja2 (>=3.1.5)", "python-multipart (>=0.0.18)", "uvicorn[standard] (>=0.12.0)"]
 
 [[package]]
 name = "flake8"
@@ -2022,14 +2024,14 @@ doc = ["sphinx"]
 
 [[package]]
 name = "starlette"
-version = "0.35.1"
+version = "0.40.0"
 description = "The little ASGI library that shines."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "starlette-0.35.1-py3-none-any.whl", hash = "sha256:50bbbda9baa098e361f398fda0928062abbaf1f54f4fadcbe17c092a01eb9a25"},
-    {file = "starlette-0.35.1.tar.gz", hash = "sha256:3e2639dac3520e4f58734ed22553f950d3f3cb1001cd2eaac4d57e8cdc5f66bc"},
+    {file = "starlette-0.40.0-py3-none-any.whl", hash = "sha256:c494a22fae73805376ea6bf88439783ecfba9aac88a43911b48c653437e784c4"},
+    {file = "starlette-0.40.0.tar.gz", hash = "sha256:1a3139688fb298ce5e2d661d37046a66ad996ce94be4d4983be019a23a04ea35"},
 ]
 
 [package.dependencies]
@@ -2037,7 +2039,7 @@ anyio = ">=3.4.0,<5"
 typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""}
 
 [package.extras]
-full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart", "pyyaml"]
+full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart (>=0.0.7)", "pyyaml"]
 
 [[package]]
 name = "threadpoolctl"
